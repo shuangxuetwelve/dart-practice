@@ -1,14 +1,35 @@
 import 'dart:math';
+import 'dart:io';
 
-const int N = 100000000; // 100 millions number.
-const int MAX = 100000000;
+const int N_DEFAULT = 10; // 10 numbers by default.
+const int N_MAX_PRINT = 100; // If the list size is larger than 100, we don't
+// print it anymore.
+const int MAX = 10;
 
-void main() {
+/// Execution example:
+/// 1. dart run quick-sort.dart
+/// 2. dart run quick-sort.dart 100
+/// 3. dart run quick-sort.dart 100000000
+void main(List<String> arguments) {
+  // Initialize arguments.
+  int n = N_DEFAULT;
+  if (arguments.isNotEmpty) {
+    try {
+      n = int.parse(arguments[0]);
+    } on FormatException {
+      stderr.write("[ERROR] Invalid integer argument ${arguments[0]}.");
+      exit(1);
+    }
+  }
+
   // Generate a random int list.
   List l = [];
   Random rng = Random();
-  for (int i = 0; i < N; i++) {
+  for (int i = 0; i < n; i++) {
     l.add(rng.nextInt(MAX));
+  }
+  if (n <= N_MAX_PRINT) {
+    print("Initial list: $l");
   }
 
   // Start quick sort and measure the performance.
@@ -16,7 +37,10 @@ void main() {
   quickSortIncrease(l, 0, l.length - 1);
   int end = DateTime.now().microsecondsSinceEpoch;
   double durationInSecond = (end - start) / 1000000;
-  print("Sorting $N numbers took $durationInSecond seconds.");
+  if (n <= N_MAX_PRINT) {
+    print("List after sorting: $l");
+  }
+  print("Sorting $n numbers took $durationInSecond seconds.");
 }
 
 /// Perform an increase quick sort. The parameter l will be sorted in-place.
